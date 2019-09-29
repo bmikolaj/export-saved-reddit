@@ -8,7 +8,7 @@ Exports saved Reddit posts into a HTML file that is ready to be imported into Go
 
 from time import time
 import argparse
-import csv
+import unicodecsv as csv
 import logging
 import sys
 
@@ -67,7 +67,7 @@ class Converter():
         ifile = open(self._html_file, 'wb')
         try:
             ifile.write(content)
-        except TypeError:
+        except (UnicodeEncodeError, TypeError):
             ifile.write(content.encode('utf-8', 'ignore'))
 
 
@@ -251,7 +251,7 @@ def write_csv(csv_rows, file_name=None):
                 csvwriter.writerow(row)
     except (UnicodeEncodeError, TypeError) as e:
         with open(file_name, "w") as f:
-            csvwriter = csv.writer(f, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
+            csvwriter = csv.writer(f, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL, encoding='utf-8')
             csvwriter.writerow(csv_fields)
             for row in csv_rows:
                 try:
